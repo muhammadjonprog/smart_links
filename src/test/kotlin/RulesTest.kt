@@ -40,5 +40,12 @@ class RulesTest {
         assertFalse(rule.matches(context))
     }
 
+    @Test
+    fun `should not match when time outside normal range`() {
+        val rule = TimeRule(10, 12, "https://day.com")
+        val context = RequestContext(DeviceType.ANDROID, 15, "US")
+        assertFalse(rule.matches(context))
+    }
+
 
 }
