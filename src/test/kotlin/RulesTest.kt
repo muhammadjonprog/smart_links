@@ -39,13 +39,4 @@ class RulesTest {
         val context = RequestContext(DeviceType.DESKTOP, 12, "RU", userAgent = null)
         assertFalse(rule.matches(context))
     }
-
-    @Test
-    fun `browserRule should not match when userAgent is null`() {
-        val rule = BrowserRule(browser = "Chrome", url = "https://chrome-only.com")
-        val context = RequestContext(DeviceType.DESKTOP, 12, "RU", userAgent = null)
-        assertFalse(rule.matches(context))
-    }
-
-
 }
