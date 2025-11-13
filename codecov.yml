@@ -1,15 +1,16 @@
 comment:
-  behavior: default          # Всегда оставлять комментарий
   layout: "reach, diff, files, tree"
-  require_changes: false     # Комментировать даже если diff = 0
+  behavior: default
+  require_changes: false
   require_base: false
   require_head: false
 
 coverage:
   status:
-    project:                 # Показывать общий процент покрытия
+    project:                  # ← ВАЖНО: включает project coverage в PR
       default:
         informational: true
-    patch:                   # Показывать % для изменённых строк
+        threshold: null
+    patch:
       default:
         informational: true
