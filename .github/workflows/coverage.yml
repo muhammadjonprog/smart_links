@@ -1,0 +1,53 @@
+name: Test & Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Run tests + Jacoco
+        run: ./gradlew test jacocoTestReport
+
+      # 1️⃣ Генерация Jacoco badge
+      - name: Generate Coverage Badge
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco-report-path: build/reports/jacoco/test/jacocoTestReport.xml
+
+      # 2️⃣ Отправить комментарий в PR
+      - name: Comment coverage in PR
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PERCENT=$(sed -n 's/.*>\(.*%\)<.*/\1/p' .github/badges/jacoco.svg)
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "🧪 **Test coverage:** $PERCENT"
+
+      # 3️⃣ Если push в main — обновить badge в репозитории
+      - name: Commit coverage badge
+        if: github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update coverage badge"
+          branch: main
+          file_pattern: .github/badges/*.svg
