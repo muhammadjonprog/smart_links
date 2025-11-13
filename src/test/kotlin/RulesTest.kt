@@ -34,7 +34,22 @@ class RulesTest {
     }
 
     @Test
+    fun `Should match when time in wrapped range`() {
+        val rule = TimeRule(startHour = 22, endHour = 6, url = "https://night.com")
+        val context = RequestContext(DeviceType.ANDROID, timeHour = 1, country = "US")
+        assertTrue(rule.matches(context))
+    }
+
+
+    @Test
     fun `BrowserRule should not match when userAgent is null`() {
+        val rule = BrowserRule(browser = "Chrome", url = "https://chrome-only.com")
+        val context = RequestContext(DeviceType.DESKTOP, 12, "RU", userAgent = null)
+        assertFalse(rule.matches(context))
+    }
+
+    @Test
+    fun `browserRule should not match when userAgent is null`() {
         val rule = BrowserRule(browser = "Chrome", url = "https://chrome-only.com")
         val context = RequestContext(DeviceType.DESKTOP, 12, "RU", userAgent = null)
         assertFalse(rule.matches(context))
