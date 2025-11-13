@@ -1,16 +1,12 @@
 comment:
   layout: "reach, diff, files, tree"
   behavior: default
-  require_changes: false
-  require_base: false
-  require_head: false
 
 coverage:
   status:
-    project:                  # ← ВАЖНО: включает project coverage в PR
+    project:
       default:
-        informational: true
-        threshold: null
+        informational: false   # ← показывать % покрытия
     patch:
       default:
-        informational: true
+        informational: true    # ← патч не ломает PR
