@@ -1,0 +1,71 @@
+name: Test & Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests + Jacoco
+        run: ./gradlew test jacocoTestReport
+
+      # 1️⃣ Создаём Jacoco badge (CSV обязательный)
+      - name: Generate Coverage Badge
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+
+      # 2️⃣ Пишем комментарий в PR
+      - name: Comment coverage in PR
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Извлекаем процент из badge-файла
+          TOTAL=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '1p')
+          INSTR=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '2p')
+          LINE=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '3p')
+          BRANCH=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '4p')
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "
+          🧪 **Test Coverage Report**
+
+          | Metric            | Value |
+          |------------------|-------|
+          | Total coverage   | $TOTAL |
+          | Instructions     | $INSTR |
+          | Line coverage    | $LINE |
+          | Branch coverage  | $BRANCH |
+
+          ✔ Tests executed successfully!
+          "
+
+      # 3️⃣ Коммит badge при push в main
+      - name: Commit coverage badge
+        if: github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update coverage badge"
+          branch: main
+          file_pattern: .github/badges/*.svg

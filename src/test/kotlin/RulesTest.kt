@@ -39,6 +39,4 @@ class RulesTest {
         val context = RequestContext(DeviceType.DESKTOP, 12, "RU", userAgent = null)
         assertFalse(rule.matches(context))
     }
-
-
 }
