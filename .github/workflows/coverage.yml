@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write        # нужен для коммита badge
-  pull-requests: write   # нужен для комментария в PR
+  contents: write
+  pull-requests: write
 
 jobs:
   test:
@@ -24,29 +24,29 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      # ВАЖНО: даём права на выполнение gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Run tests + Jacoco
         run: ./gradlew test jacocoTestReport
 
-      # 1️⃣ Генерация Jacoco badge
+      # 1️⃣ Создаём Jacoco badge (CSV обязательный)
       - name: Generate Coverage Badge
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          jacoco-report-path: build/reports/jacoco/test/jacocoTestReport.xml
+          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
 
-      # 2️⃣ Комментарий в PR с процентом покрытия
+      # 2️⃣ Пишем комментарий в PR
       - name: Comment coverage in PR
         if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PERCENT=$(sed -n 's/.*>\(.*%\)<.*/\1/p' .github/badges/jacoco.svg)
-          gh pr comment ${{ github.event.pull_request.number }} --body "🧪 **Test coverage:** $PERCENT"
+          PERCENT=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg)
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "🧪 **Test coverage:** $PERCENT"
 
-      # 3️⃣ Коммит badge (только если push в main)
+      # 3️⃣ Коммит badge при push в main
       - name: Commit coverage badge
         if: github.ref == 'refs/heads/main'
         uses: stefanzweifel/git-auto-commit-action@v4
