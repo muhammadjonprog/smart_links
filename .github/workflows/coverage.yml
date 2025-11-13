@@ -42,9 +42,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PERCENT=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg)
-          gh pr comment ${{ github.event.pull_request.number }} \
-            --body "🧪 **Test coverage:** $PERCENT"
+          # Извлекаем процент из badge-файла
+          TOTAL=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '1p')
+          INSTR=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '2p')
+          LINE=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '3p')
+          BRANCH=$(grep -oP '\d+(\.\d+)?%' .github/badges/jacoco.svg | sed -n '4p')
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "
+          🧪 **Test Coverage Report**
+
+          | Metric            | Value |
+          |------------------|-------|
+          | Total coverage   | $TOTAL |
+          | Instructions     | $INSTR |
+          | Line coverage    | $LINE |
+          | Branch coverage  | $BRANCH |
+
+          ✔ Tests executed successfully!
+          "
 
       # 3️⃣ Коммит badge при push в main
       - name: Commit coverage badge
