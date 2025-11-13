@@ -1,0 +1,16 @@
+comment:
+  layout: "reach, diff, files, tree"
+  behavior: default
+  show_critical_paths: true
+  require_changes: false
+  require_base: true
+  require_head: true
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
