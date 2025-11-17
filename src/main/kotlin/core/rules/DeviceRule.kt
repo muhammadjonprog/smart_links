@@ -10,6 +10,9 @@ class DeviceRule(
     private val url: String
 ) : Rule {
 
+    override val priority: Int
+        get() = 7
+
     override val name = "DeviceRule $device"
 
     override fun matches(context: RequestContext): Boolean {

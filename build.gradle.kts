@@ -3,7 +3,7 @@ plugins {
     id("jacoco")
 }
 
-group = "org.bot"
+group = "ru.otus"
 version = "1.0.1"
 
 repositories {

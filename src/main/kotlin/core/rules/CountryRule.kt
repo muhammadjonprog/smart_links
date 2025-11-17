@@ -9,6 +9,9 @@ class CountryRule(
     private val url: String
 ) : Rule {
 
+    override val priority: Int
+        get() = 6
+
     override val name = "CountryRule ${countries.joinToString()}"
 
     override fun matches(context: RequestContext): Boolean {

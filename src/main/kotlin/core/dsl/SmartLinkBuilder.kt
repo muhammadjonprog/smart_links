@@ -6,7 +6,7 @@ import core.rules.DeviceRule
 import core.rules.TimeRule
 import org.bot.core.rules.base.DeviceType
 import org.bot.core.rules.base.Rule
-//Interpreter pattern
+//Interpreter and Builder pattern
 class SmartLinkBuilder {
 
     private val rules = mutableListOf<Rule>()
