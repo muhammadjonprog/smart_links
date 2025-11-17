@@ -10,6 +10,9 @@ class TimeRule(
     private val url: String
 ) : Rule {
 
+    override val priority: Int
+        get() = 10
+
     override val name = "TimeRule $startHour-$endHour"
 
     override fun matches(context: RequestContext): Boolean {

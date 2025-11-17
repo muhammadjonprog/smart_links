@@ -7,6 +7,10 @@ import org.bot.core.rules.base.RuleResult
 class BrowserRule(
     private val browser: String, private val url: String
 ) : Rule {
+
+    override val priority: Int
+        get() = 5
+
     override val name = "BrowserRule"
 
     override fun matches(context: RequestContext): Boolean =

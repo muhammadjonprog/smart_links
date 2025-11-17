@@ -3,8 +3,8 @@ plugins {
     id("jacoco")
 }
 
-group = "org.bot"
-version = "1.0.0"
+group = "ru.otus"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
