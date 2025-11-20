@@ -7,7 +7,7 @@ import org.bot.core.rules.base.RuleResult
 class BrowserRule(
     private val browser: String, private val url: String
 ) : Rule {
-    override val name = "BrowserRule"
+    override val name = "BrowserRule $browser"
 
     override fun matches(context: RequestContext): Boolean =
         context.userAgent?.contains(browser, ignoreCase = true) == true
